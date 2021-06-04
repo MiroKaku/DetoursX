@@ -12,17 +12,22 @@ if is_mode("debug") then
 end
 
 -- target
-target("detours")
+target("Detours")
     set_kind("static")
     add_files("Detours/src/*.cpp|uimports.cpp")
 
-target("detoursx")
+target("Unittest")
+    set_kind("binary")
+    add_deps("Detours")
+    add_files("src/unittest.cpp")
+
+target("DetoursX")
     add_rules("wdk.static", "wdk.env.wdm")
     add_files("src/*.cpp|uimports.cpp|unittest.cpp")
 
-target("unittest")
-    add_deps("detoursx")
+target("UnittestX")
     add_rules("wdk.driver", "wdk.env.wdm")
+    add_deps("DetoursX")
     add_files("src/unittest.cpp")
 
 --

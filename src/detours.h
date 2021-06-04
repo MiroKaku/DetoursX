@@ -16,10 +16,12 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 
-#undef DETOURS_KERNEL
-
 #if __has_include(<wdm.h>)
 #define DETOURS_KERNEL
+#endif
+
+#ifdef DETOURS_KERNEL
+#include "api_thunks.h"
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -269,13 +271,6 @@ typedef ULONG ULONG_PTR;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
-#ifndef ZeroMemory
-#define ZeroMemory RtlSecureZeroMemory
-#endif
-
-//////////////////////////////////////////////////////////////////////////////
-//
 #ifndef GUID_DEFINED
 #define GUID_DEFINED
 typedef struct  _GUID
@@ -318,6 +313,17 @@ typedef struct  _GUID
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+
+//
+// Constants
+//
+#define MoveMemory RtlMoveMemory
+#define CopyMemory RtlCopyMemory
+#define FillMemory RtlFillMemory
+#define ZeroMemory RtlZeroMemory
+
+#undef  NULL
+#define NULL nullptr
 
 /////////////////////////////////////////////////// Instruction Target Macros.
 //
@@ -594,6 +600,8 @@ BOOL WINAPI DetourBinaryEditImports(_In_ PDETOUR_BINARY pBinary,
 BOOL WINAPI DetourBinaryWrite(_In_ PDETOUR_BINARY pBinary, _In_ HANDLE hFile);
 BOOL WINAPI DetourBinaryClose(_In_ PDETOUR_BINARY pBinary);
 
+
+#ifndef DETOURS_KERNEL
 /////////////////////////////////////////////////// Create Process & Load Dll.
 //
 typedef BOOL (WINAPI *PDETOUR_CREATE_PROCESS_ROUTINEA)(
@@ -773,6 +781,8 @@ VOID CALLBACK DetourFinishHelperProcess(_In_ HWND,
                                         _In_ LPSTR,
                                         _In_ INT);
 
+#endif
+
 //
 //////////////////////////////////////////////////////////////////////////////
 #ifdef __cplusplus
@@ -801,7 +811,7 @@ LONG InterlockedCompareExchange(_Inout_ LONG *ptr, _In_ LONG nval, _In_ LONG ova
 {
     return (LONG)::InterlockedCompareExchange((PVOID*)ptr, (PVOID)nval, (PVOID)oval);
 }
-#else
+#elif !defined(DETOURS_KERNEL)
 #pragma warning(push)
 #pragma warning(disable:4091) // empty typedef
 #include <dbghelp.h>

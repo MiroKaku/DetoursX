@@ -12,8 +12,17 @@
 #pragma warning(disable:4091) // empty typedef
 #endif
 
+#if __has_include(<wdm.h>)
+#define DETOURS_KERNEL
+#endif
+
+#ifdef DETOURS_KERNEL
+#include <ntddk.h>
+#else
 #define _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE 1
 #include <windows.h>
+#endif
+
 #include <limits.h>
 
 // #define DETOUR_DEBUG 1
@@ -461,7 +470,7 @@ PBYTE CDetourDis::CopyBytesPrefix(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc)
 PBYTE CDetourDis::CopyBytesSegment(REFCOPYENTRY, PBYTE pbDst, PBYTE pbSrc)
 {
     m_nSegmentOverride = pbSrc[0];
-    return CopyBytesPrefix(0, pbDst, pbSrc);
+    return CopyBytesPrefix(NULL, pbDst, pbSrc);
 }
 
 PBYTE CDetourDis::CopyBytesRax(REFCOPYENTRY, PBYTE pbDst, PBYTE pbSrc)
@@ -469,7 +478,7 @@ PBYTE CDetourDis::CopyBytesRax(REFCOPYENTRY, PBYTE pbDst, PBYTE pbSrc)
     if (pbSrc[0] & 0x8) {
         m_bRaxOverride = TRUE;
     }
-    return CopyBytesPrefix(0, pbDst, pbSrc);
+    return CopyBytesPrefix(NULL, pbDst, pbSrc);
 }
 
 PBYTE CDetourDis::CopyBytesJump(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc)
@@ -2177,7 +2186,7 @@ BOOL DETOUR_IA64_BUNDLE::SetNop(BYTE slot)
         SetData(slot, 0);
         return true;
     }
-    DebugBreak();
+    __debugbreak();
     return false;
 }
 
@@ -4208,29 +4217,29 @@ PVOID WINAPI DetourCopyInstruction(_In_opt_ PVOID pDst,
 
 #endif // DETOURS_ARM64
 
-BOOL WINAPI DetourSetCodeModule(_In_ HMODULE hModule,
-                                _In_ BOOL fLimitReferencesToModule)
-{
-#if defined(DETOURS_X64) || defined(DETOURS_X86)
-    PBYTE pbBeg = NULL;
-    PBYTE pbEnd = (PBYTE)~(ULONG_PTR)0;
-
-    if (hModule != NULL) {
-        ULONG cbModule = DetourGetModuleSize(hModule);
-
-        pbBeg = (PBYTE)hModule;
-        pbEnd = (PBYTE)hModule + cbModule;
-    }
-
-    return CDetourDis::SetCodeModule(pbBeg, pbEnd, fLimitReferencesToModule);
-#elif defined(DETOURS_ARM) || defined(DETOURS_ARM64) || defined(DETOURS_IA64)
-    (void)hModule;
-    (void)fLimitReferencesToModule;
-    return TRUE;
-#else
-#error unknown architecture (x86, x64, arm, arm64, ia64)
-#endif
-}
+//BOOL WINAPI DetourSetCodeModule(_In_ HMODULE hModule,
+//                                _In_ BOOL fLimitReferencesToModule)
+//{
+//#if defined(DETOURS_X64) || defined(DETOURS_X86)
+//    PBYTE pbBeg = NULL;
+//    PBYTE pbEnd = (PBYTE)~(ULONG_PTR)0;
+//
+//    if (hModule != NULL) {
+//        ULONG cbModule = DetourGetModuleSize(hModule);
+//
+//        pbBeg = (PBYTE)hModule;
+//        pbEnd = (PBYTE)hModule + cbModule;
+//    }
+//
+//    return CDetourDis::SetCodeModule(pbBeg, pbEnd, fLimitReferencesToModule);
+//#elif defined(DETOURS_ARM) || defined(DETOURS_ARM64) || defined(DETOURS_IA64)
+//    (void)hModule;
+//    (void)fLimitReferencesToModule;
+//    return TRUE;
+//#else
+//#error unknown architecture (x86, x64, arm, arm64, ia64)
+//#endif
+//}
 
 //
 ///////////////////////////////////////////////////////////////// End of File.
