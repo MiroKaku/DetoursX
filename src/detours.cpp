@@ -1756,10 +1756,11 @@ LONG WINAPI DetourUpdateThread(_In_ HANDLE /*hThread*/)
 
     // Make sure only one processor can start a transaction.
     if (InterlockedCompareExchange(&s_nPendingProcessor, true, false) == false) {
+        KIRQL nothing = PASSIVE_LEVEL;
 
         KeRaiseIrql(APC_LEVEL, &s_nPendingIRQL);
         KeGenericCallDpc(detour_cpu_sync, (PVOID)(ULONG_PTR)KeGetCurrentProcessorNumber());
-        KeRaiseIrql(DISPATCH_LEVEL, &s_nPendingIRQL);
+        KeRaiseIrql(DISPATCH_LEVEL, &nothing);
     }
 
     return NO_ERROR;
