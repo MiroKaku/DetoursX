@@ -184,7 +184,16 @@ EXTERN_C int main(int /*argc*/, char* /*argv*/[])
     DetourTransactionCommit();
 
 #ifdef KERNEL_MODE
-    DriverObject->DriverUnload = [](PDRIVER_OBJECT) {};
+    DriverObject->DriverUnload = [](PDRIVER_OBJECT)
+    {
+        DetourTransactionBegin();
+        DetourUpdateThread(ZwCurrentThread());
+
+        DetourDetach((void**)&Hook::_ZwOpenFile, Hook::ZwOpenFile);
+        DetourDetach((void**)&Hook::_ZwCreateFile, Hook::ZwCreateFile);
+
+        DetourTransactionCommit();
+    };
 #endif
 
     LOG(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, __FUNCTION__ "(): Final.\n");

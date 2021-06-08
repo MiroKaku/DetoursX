@@ -47,6 +47,10 @@ PVOID NTAPI RtlPcToFileHeader(
     _Out_ PVOID* BaseOfImage
 );
 
+PIMAGE_NT_HEADERS NTAPI RtlImageNtHeader(
+    _In_ PVOID Base
+);
+
 //////////////////////////////////////////////////////////////////////////////
 //
 
