@@ -12,7 +12,7 @@ DetoursX 是基于微软 [Detours 4.0.1](https://github.com/microsoft/Detours/tr
 
 ### 1.1 原理
 
-* X64 模式下，在目标函数所在的区段尾部，寻找空白区存储跳板地址，同来支持更远的跳转。
+* X64 模式下，在目标函数所在的区段尾部，寻找空白区存储跳板地址，用来支持远跳转。
 * 在 `DetourTransactionCommitEx` 中，通过 `KeGenericCallDpc` 进行处理器同步处理 `CopyMemory`，来达到安全 Hook 的目的。
 
 ### 1.2 支持情况
