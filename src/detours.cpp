@@ -207,6 +207,14 @@ inline PBYTE detour_gen_jmp_immediate(PBYTE pbCode, PBYTE pbJmpVal)
     return pbCode;
 }
 
+inline PBYTE detour_gen_jmp_immediate(PBYTE pbCode, PBYTE pbFixedCode, PBYTE pbJmpVal)
+{
+    PBYTE pbJmpSrc = pbFixedCode + 5;
+    *pbCode++ = 0xE9;   // jmp +imm32
+    *((INT32*&)pbCode)++ = (INT32)(pbJmpVal - pbJmpSrc);
+    return pbCode;
+}
+
 inline PBYTE detour_gen_jmp_indirect(PBYTE pbCode, PBYTE *ppbJmpVal)
 {
     *pbCode++ = 0xff;   // jmp [+imm32]
@@ -273,9 +281,26 @@ inline void detour_find_jmp_bounds(PBYTE pbCode,
                                    PDETOUR_TRAMPOLINE *ppLower,
                                    PDETOUR_TRAMPOLINE *ppUpper)
 {
-    (void)pbCode;
-    *ppLower = (PDETOUR_TRAMPOLINE)(ULONG_PTR)0x0000000000080000;
-    *ppUpper = (PDETOUR_TRAMPOLINE)(ULONG_PTR)0xfffffffffff80000;
+    // We have to place trampolines within +/- 2GB of code.
+    ULONG_PTR lo = detour_2gb_below((ULONG_PTR)pbCode);
+    ULONG_PTR hi = detour_2gb_above((ULONG_PTR)pbCode);
+    DETOUR_TRACE(("[%p..%p..%p]\n", (PVOID)lo, pbCode, (PVOID)hi));
+
+    // And, within +/- 2GB of relative jmp targets.
+    if (pbCode[0] == 0xe9) {   // jmp +imm32
+        PBYTE pbNew = pbCode + 5 + *(UNALIGNED INT32*) & pbCode[1];
+
+        if (pbNew < pbCode) {
+            hi = detour_2gb_above((ULONG_PTR)pbNew);
+        }
+        else {
+            lo = detour_2gb_below((ULONG_PTR)pbNew);
+        }
+        DETOUR_TRACE(("[%p..%p..%p] +imm32\n", (PVOID)lo, pbCode, (PVOID)hi));
+    }
+
+    *ppLower = (PDETOUR_TRAMPOLINE)lo;
+    *ppUpper = (PDETOUR_TRAMPOLINE)hi;
 }
 
 inline BOOL detour_does_code_end_function(PBYTE pbCode)
@@ -1545,8 +1570,6 @@ LONG WINAPI DetourTransactionCommitEx(_Out_opt_ PVOID **pppFailedPointer)
                             o->pTrampoline->rbRestore,
                             o->pTrampoline->cbRestore);
 
-                        detour_del_codein(o->pTrampoline->pbCodeInMdl);
-
 #ifdef DETOURS_IA64
                         * o->ppbPointer = (PBYTE)o->pTrampoline->pbRemain - o->pTrampoline->cbRestore;
 #endif // DETOURS_IA64
@@ -1556,6 +1579,7 @@ LONG WINAPI DetourTransactionCommitEx(_Out_opt_ PVOID **pppFailedPointer)
 #endif // DETOURS_X86
 
 #ifdef DETOURS_X64
+                        detour_del_codein(o->pTrampoline->pbCodeInMdl);
                         * o->ppbPointer = o->pTrampoline->pbRemain - o->pTrampoline->cbRestore;
 #endif // DETOURS_X64
 
@@ -1599,7 +1623,7 @@ LONG WINAPI DetourTransactionCommitEx(_Out_opt_ PVOID **pppFailedPointer)
 #endif // DETOURS_X64
 
 #ifdef DETOURS_X86
-                        PBYTE pbCode = detour_gen_jmp_immediate(o->pbTarget, o->pTrampoline->pbDetour);
+                        PBYTE pbCode = detour_gen_jmp_immediate(o->pbTarget, o->pTrampoline->pbRemain - o->pTrampoline->cbRestore, o->pTrampoline->pbDetour);
                         pbCode = detour_gen_brk(pbCode, o->pbTarget + o->pTrampoline->cbRestore /*o->pTrampoline->pbRemain*/);
                         *o->ppbPointer = o->pTrampoline->rbCode;
                         UNREFERENCED_PARAMETER(pbCode);
@@ -1971,8 +1995,10 @@ LONG WINAPI DetourAttachEx(_Inout_ PVOID *ppPointer,
         __debugbreak();
     }
 
+#ifdef DETOURS_X64
     pTrampoline->pbCodeIn = NULL;
     pTrampoline->pbCodeInMdl = NULL;
+#endif
 
     pTrampoline->cbCode = (BYTE)(pbTrampoline - pTrampoline->rbCode);
     pTrampoline->cbRestore = (BYTE)cbTarget;
