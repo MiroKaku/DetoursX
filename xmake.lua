@@ -28,7 +28,7 @@ target("DetoursX")
 target("UnittestX")
     add_rules("wdk.driver", "wdk.env.wdm")
     add_deps("DetoursX")
-    add_files("src/unittest.cpp")
+    add_files("src/unittest.cpp", "src/unittest.inf")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
