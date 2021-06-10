@@ -55,6 +55,9 @@ static void DbgPrint(
 
 
 #ifndef KERNEL_MODE
+#define NtCurrentThread GetCurrentThread
+#define ZwCurrentThread NtCurrentThread
+
 EXTERN_C NTSTATUS NTAPI ZwOpenFile(
     _Out_ PHANDLE FileHandle,
     _In_ ACCESS_MASK DesiredAccess,
@@ -185,7 +188,11 @@ EXTERN_C int main(int /*argc*/, char* /*argv*/[])
 
 #ifdef KERNEL_MODE
     DriverObject->DriverUnload = [](PDRIVER_OBJECT)
+#endif
     {
+#ifndef KERNEL_MODE
+        (void)getchar();
+#endif
         DetourTransactionBegin();
         DetourUpdateThread(ZwCurrentThread());
 
@@ -194,7 +201,6 @@ EXTERN_C int main(int /*argc*/, char* /*argv*/[])
 
         DetourTransactionCommit();
     };
-#endif
 
     LOG(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, __FUNCTION__ "(): Final.\n");
     return 0;

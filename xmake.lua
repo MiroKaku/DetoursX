@@ -28,6 +28,7 @@ target("DetoursX")
 target("UnittestX")
     add_rules("wdk.driver", "wdk.env.wdm")
     set_values("wdk.sign.mode", "test")
+    set_values("wdk.env.winver", "win7_sp3")
     add_deps("DetoursX")
     add_files("src/unittest.cpp", "src/unittest.inf")
 
