@@ -1,5 +1,5 @@
 -- xmake
-set_xmakever("2.5.4")
+set_xmakever("2.5.5")
 add_rules("plugin.vsxmake.autoupdate")
 
 -- global
