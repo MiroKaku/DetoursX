@@ -3,35 +3,38 @@
   <ItemGroup>
     <Filter Include="src">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd;cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\api_thunks.cpp">
+    <ClCompile Include="..\Detours\src\creatwth.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\detours.cpp">
+    <ClCompile Include="..\Detours\src\detours.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\disasm.cpp">
+    <ClCompile Include="..\Detours\src\disasm.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\disolarm.cpp">
+    <ClCompile Include="..\Detours\src\disolarm.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\disolarm64.cpp">
+    <ClCompile Include="..\Detours\src\disolarm64.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\disolia64.cpp">
+    <ClCompile Include="..\Detours\src\disolia64.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\disolx64.cpp">
+    <ClCompile Include="..\Detours\src\disolx64.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\disolx86.cpp">
+    <ClCompile Include="..\Detours\src\disolx86.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\creatwth.cpp">
+    <ClCompile Include="..\Detours\src\image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Detours\src\modules.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

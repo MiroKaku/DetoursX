@@ -26,38 +26,8 @@ DetoursX 是基于微软 [Detours 4.0.1](https://github.com/microsoft/Detours/tr
 - [x] DetourAttachEx
 - [x] DetourDetach
 - [x] DetourDetachEx
-- [ ] DetourFindFunction
-- [ ] DetourCodeFromPointer
-- [ ] DetourCopyInstruction
-- [ ] DetourSetCodeModule
-- [ ] DetourGetContainingModule
-- [ ] DetourEnumerateModules
-- [ ] DetourGetEntryPoint
-- [ ] DetourGetModuleSize
-- [ ] DetourEnumerateExports
-- [ ] DetourEnumerateImports
-- [ ] DetourEnumerateImportsEx
-- [ ] DetourFindPayload
-- [ ] DetourFindPayloadEx
-- [ ] DetourGetSizeOfPayloads
-- [ ] DetourBinaryOpen
-- [ ] DetourBinaryEnumeratePayloads
-- [ ] DetourBinaryFindPayload
-- [ ] DetourBinarySetPayload
-- [ ] DetourBinaryDeletePayload
-- [ ] DetourBinaryPurgePayloads
-- [ ] DetourBinaryResetImports
-- [ ] DetourBinaryEditImports
-- [ ] DetourBinaryWrite
-- [ ] DetourBinaryClose
-- [ ] DetourCreateProcessWithDll
-- [ ] DetourCreateProcessWithDllEx
-- [ ] DetourCreateProcessWithDlls
-- [ ] DetourProcessViaHelper
-- [ ] DetourUpdateProcessWithDll
-- [ ] DetourUpdateProcessWithDllEx
-- [ ] DetourRestoreAfterWith
-- [ ] DetourRestoreAfterWithEx
-- [ ] DetourIsHelperProcess
-- [ ] DetourFinishHelperProcess
-- [ ] ...
+- [x] DetourCodeFromPointer
+- [x] DetourCopyInstruction
+- [x] DetourUpdateProcessWithDll
+- [x] DetourUpdateProcessWithDllEx
+- [x] DetourCopyPayloadToProcess

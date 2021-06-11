@@ -16,10 +16,11 @@
 #define DETOURS_KERNEL
 #endif
 
+#define _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE 1
+
 #ifdef DETOURS_KERNEL
 #include <ntddk.h>
 #else
-#define _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE 1
 #include <windows.h>
 #endif
 

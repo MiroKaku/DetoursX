@@ -17,20 +17,21 @@ target("Detours")
     add_files("Detours/src/*.cpp|uimports.cpp")
 
 target("Unittest")
-    set_kind("binary")
+    set_kind("shared")
     add_deps("Detours")
-    add_files("src/unittest.cpp")
+    add_files("test/unittest.cpp", "test/module.def")
 
 target("DetoursX")
     add_rules("wdk.static", "wdk.env.wdm")
-    add_files("src/*.cpp|uimports.cpp|unittest.cpp")
+    add_files("src/*.cpp|uimports.cpp")
 
 target("UnittestX")
     add_rules("wdk.driver", "wdk.env.wdm")
     set_values("wdk.sign.mode", "test")
     set_values("wdk.env.winver", "win7_sp3")
     add_deps("DetoursX")
-    add_files("src/unittest.cpp", "src/unittest.inf")
+    add_ldflags("-L/INTEGRITYCHECK")
+    add_files("test/unittest.cpp", "test/unittest.inf")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

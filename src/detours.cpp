@@ -18,10 +18,11 @@
 #define DETOURS_KERNEL
 #endif
 
+#define _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE 1
+
 #ifdef DETOURS_KERNEL
 #include <ntifs.h>
 #else
-#define _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE 1
 #include <windows.h>
 #endif
 
@@ -2327,39 +2328,39 @@ static DWORD DetourPageProtectAdjustExecute(_In_  DWORD dwOldProtect,
     return dwNewProtect;
 }
 
-//_Success_(return != FALSE)
-//BOOL WINAPI DetourVirtualProtectSameExecuteEx(_In_  HANDLE hProcess,
-//                                              _In_  PVOID pAddress,
-//                                              _In_  SIZE_T nSize,
-//                                              _In_  DWORD dwNewProtect,
-//                                              _Out_ PDWORD pdwOldProtect)
-//// Some systems do not allow executability of a page to change. This function applies
-//// dwNewProtect to [pAddress, nSize), but preserving the previous executability.
-//// This function is meant to be a drop-in replacement for some uses of VirtualProtectEx.
-//// When "restoring" page protection, there is no need to use this function.
-//{
-//    MEMORY_BASIC_INFORMATION mbi;
-//
-//    // Query to get existing execute access.
-//
-//    ZeroMemory(&mbi, sizeof(mbi));
-//
-//    if (VirtualQueryEx(hProcess, pAddress, &mbi, sizeof(mbi)) == 0) {
-//        return FALSE;
-//    }
-//    return VirtualProtectEx(hProcess, pAddress, nSize,
-//                            DetourPageProtectAdjustExecute(mbi.Protect, dwNewProtect),
-//                            pdwOldProtect);
-//}
-//
-//_Success_(return != FALSE)
-//BOOL WINAPI DetourVirtualProtectSameExecute(_In_  PVOID pAddress,
-//                                            _In_  SIZE_T nSize,
-//                                            _In_  DWORD dwNewProtect,
-//                                            _Out_ PDWORD pdwOldProtect)
-//{
-//    return DetourVirtualProtectSameExecuteEx(GetCurrentProcess(),
-//                                             pAddress, nSize, dwNewProtect, pdwOldProtect);
-//}
+_Success_(return != FALSE)
+BOOL WINAPI DetourVirtualProtectSameExecuteEx(_In_  HANDLE hProcess,
+                                              _In_  PVOID pAddress,
+                                              _In_  SIZE_T nSize,
+                                              _In_  DWORD dwNewProtect,
+                                              _Out_ PDWORD pdwOldProtect)
+// Some systems do not allow executability of a page to change. This function applies
+// dwNewProtect to [pAddress, nSize), but preserving the previous executability.
+// This function is meant to be a drop-in replacement for some uses of VirtualProtectEx.
+// When "restoring" page protection, there is no need to use this function.
+{
+    MEMORY_BASIC_INFORMATION mbi;
+
+    // Query to get existing execute access.
+
+    ZeroMemory(&mbi, sizeof(mbi));
+
+    if (VirtualQueryEx(hProcess, pAddress, &mbi, sizeof(mbi)) == 0) {
+        return FALSE;
+    }
+    return VirtualProtectEx(hProcess, pAddress, nSize,
+                            DetourPageProtectAdjustExecute(mbi.Protect, dwNewProtect),
+                            pdwOldProtect);
+}
+
+_Success_(return != FALSE)
+BOOL WINAPI DetourVirtualProtectSameExecute(_In_  PVOID pAddress,
+                                            _In_  SIZE_T nSize,
+                                            _In_  DWORD dwNewProtect,
+                                            _Out_ PDWORD pdwOldProtect)
+{
+    return DetourVirtualProtectSameExecuteEx(GetCurrentProcess(),
+                                             pAddress, nSize, dwNewProtect, pdwOldProtect);
+}
 
 //  End of File

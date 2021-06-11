@@ -24,10 +24,15 @@
 extern "C" {
 #endif
 
+#undef  NULL
+#define NULL nullptr
+
 //////////////////////////////////////////////////////////////////////////////
 //
 
 // System Routine
+
+// Ke
 
 VOID NTAPI KeGenericCallDpc(
     _In_ PKDEFERRED_ROUTINE Routine,
@@ -42,6 +47,8 @@ LOGICAL NTAPI KeSignalCallDpcSynchronize(
     _In_ PVOID SystemArgument2
 );
 
+// Rtl
+
 PVOID NTAPI RtlPcToFileHeader(
     _In_ PVOID PcValue,
     _Out_ PVOID* BaseOfImage
@@ -49,6 +56,42 @@ PVOID NTAPI RtlPcToFileHeader(
 
 PIMAGE_NT_HEADERS NTAPI RtlImageNtHeader(
     _In_ PVOID Base
+);
+
+// Mm
+
+NTSTATUS NTAPI MmCopyVirtualMemory(
+    _In_ PEPROCESS FromProcess,
+    _In_ CONST VOID* FromAddress,
+    _In_ PEPROCESS ToProcess,
+    _Out_ PVOID ToAddress,
+    _In_ SIZE_T BufferSize,
+    _In_ KPROCESSOR_MODE PreviousMode,
+    _Out_ PSIZE_T NumberOfBytesCopied
+);
+
+// Zw
+
+NTSTATUS NTAPI ZwQueryInformationProcess(
+    _In_ HANDLE ProcessHandle,
+    _In_ PROCESSINFOCLASS ProcessInformationClass,
+    _Out_writes_bytes_(ProcessInformationLength) PVOID ProcessInformation,
+    _In_ ULONG ProcessInformationLength,
+    _Out_opt_ PULONG ReturnLength
+);
+
+NTSTATUS NTAPI ZwProtectVirtualMemory(
+    _In_ HANDLE ProcessHandle,
+    _Inout_ PVOID* BaseAddress,
+    _Inout_ PSIZE_T RegionSize,
+    _In_ ULONG NewProtect,
+    _Out_ PULONG OldProtect
+);
+
+NTSTATUS NTAPI ZwFlushInstructionCache(
+    _In_ HANDLE ProcessHandle,
+    _In_opt_ PVOID BaseAddress,
+    _In_ SIZE_T Length
 );
 
 //////////////////////////////////////////////////////////////////////////////
@@ -136,16 +179,61 @@ DWORD WINAPI GetCurrentThreadId(
     VOID
 );
 
-
-//////////////////////////////////////////////////////////////////////////////
-//
-
-// Processor
-
-DWORD WINAPI GetCurrentProcessorNumber(
-    VOID
+BOOL WINAPI IsWow64Process(
+    _In_ HANDLE hProcess,
+    _Out_ PBOOL Wow64Process
 );
 
+_Success_(return != FALSE)
+BOOL WINAPI ReadProcessMemory(
+    _In_ HANDLE hProcess,
+    _In_ LPCVOID lpBaseAddress,
+    _Out_writes_bytes_to_(nSize, *lpNumberOfBytesRead) LPVOID lpBuffer,
+    _In_ SIZE_T nSize,
+    _Out_opt_ SIZE_T * lpNumberOfBytesRead
+);
+
+_Success_(return != FALSE)
+BOOL WINAPI WriteProcessMemory(
+    _In_ HANDLE hProcess,
+    _In_ LPVOID lpBaseAddress,
+    _In_reads_bytes_(nSize) LPCVOID lpBuffer,
+    _In_ SIZE_T nSize,
+    _Out_opt_ SIZE_T * lpNumberOfBytesWritten
+);
+
+_Ret_maybenull_
+_Post_writable_byte_size_(dwSize)
+LPVOID WINAPI VirtualAllocEx(
+    _In_ HANDLE hProcess,
+    _In_opt_ LPVOID lpAddress,
+    _In_ SIZE_T dwSize,
+    _In_ DWORD flAllocationType,
+    _In_ DWORD flProtect
+);
+
+BOOL WINAPI VirtualFreeEx(
+    _In_ HANDLE hProcess,
+    _Pre_notnull_ _When_(dwFreeType == MEM_DECOMMIT, _Post_invalid_) _When_(dwFreeType == MEM_RELEASE, _Post_ptr_invalid_) LPVOID lpAddress,
+    _In_ SIZE_T dwSize,
+    _In_ DWORD dwFreeType
+);
+
+_Success_(return != FALSE)
+BOOL WINAPI VirtualProtectEx(
+    _In_ HANDLE hProcess,
+    _In_ LPVOID lpAddress,
+    _In_ SIZE_T dwSize,
+    _In_ DWORD flNewProtect,
+    _Out_ PDWORD lpflOldProtect
+);
+
+SIZE_T WINAPI VirtualQueryEx(
+    _In_ HANDLE hProcess,
+    _In_opt_ LPCVOID lpAddress,
+    _Out_writes_bytes_to_(dwLength, return) struct _MEMORY_BASIC_INFORMATION* lpBuffer,
+    _In_ SIZE_T dwLength
+);
 
 #ifdef __cplusplus
 }
