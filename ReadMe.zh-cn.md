@@ -2,7 +2,7 @@
 
 [![Actions Status](https://github.com/MiroKaku/DetoursX/workflows/CodeQL/badge.svg)](https://github.com/MiroKaku/DetoursX/actions)
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/MiroKaku/DetoursX/blob/master/LICENSE)
-![Windows](https://img.shields.io/badge/Windows-7+-orange.svg)
+![Windows](https://img.shields.io/badge/Windows-10+-orange.svg)
 ![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2019-purple.svg)
 
 ## 1. 关于
@@ -31,3 +31,7 @@ DetoursX 是基于微软 [Detours 4.0.1](https://github.com/microsoft/Detours/tr
 - [x] DetourUpdateProcessWithDll
 - [x] DetourUpdateProcessWithDllEx
 - [x] DetourCopyPayloadToProcess
+
+## 文档
+
+[Microsoft Detours Wiki](https://github.com/microsoft/Detours/wiki)

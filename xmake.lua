@@ -20,6 +20,11 @@ target("Unittest")
     set_kind("shared")
     add_deps("Detours")
     add_files("test/unittest.cpp", "test/module.def")
+    if is_arch("x64") then
+        set_basename("Unittest64")
+    else
+        set_basename("Unittest32")
+    end
 
 target("DetoursX")
     add_rules("wdk.static", "wdk.env.wdm")
@@ -28,9 +33,8 @@ target("DetoursX")
 target("UnittestX")
     add_rules("wdk.driver", "wdk.env.wdm")
     set_values("wdk.sign.mode", "test")
-    set_values("wdk.env.winver", "win7_sp3")
     add_deps("DetoursX")
-    add_ldflags("-L/INTEGRITYCHECK")
+    add_ldflags("/INTEGRITYCHECK")
     add_files("test/unittest.cpp", "test/unittest.inf")
 
 --

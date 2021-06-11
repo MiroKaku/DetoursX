@@ -162,8 +162,8 @@ namespace Hook
         {
             auto guard = DetourLockGuard(_lock(IdxOfZwOpenFile));
 
-            //LOG(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "[DetoursX] " "ZwOpenFile(): %wZ\n",
-            //    ObjectAttributes ? ObjectAttributes->ObjectName : nullptr);
+            LOG(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "[DetoursX] " "ZwOpenFile(): %wZ\n",
+                ObjectAttributes ? ObjectAttributes->ObjectName : nullptr);
         }
 
 #ifndef KERNEL_MODE
@@ -201,8 +201,8 @@ namespace Hook
         {
             auto guard = DetourLockGuard(_lock(IdxOfZwCreateFile));
 
-            //LOG(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "[DetoursX] " "ZwCreateFile(): %wZ\n",
-            //    ObjectAttributes ? ObjectAttributes->ObjectName : nullptr);
+            LOG(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "[DetoursX] " "ZwCreateFile(): %wZ\n",
+                ObjectAttributes ? ObjectAttributes->ObjectName : nullptr);
         }
 
 #ifndef KERNEL_MODE
@@ -229,6 +229,7 @@ namespace Hook
 
 
 #ifdef KERNEL_MODE
+// Note: https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/windows-kernel-mode-process-and-thread-manager#best
 VOID CreateProcessCallback (
     _Inout_ PEPROCESS Process,
     _In_ HANDLE /*ProcessId*/,
