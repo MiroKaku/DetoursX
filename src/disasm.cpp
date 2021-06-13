@@ -19,7 +19,8 @@
 #define _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE 1
 
 #ifdef DETOURS_KERNEL
-#include <ntddk.h>
+#include <ntifs.h>
+#include "api_thunks.h"
 #else
 #include <windows.h>
 #endif

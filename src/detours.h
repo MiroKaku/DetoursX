@@ -11,18 +11,16 @@
 #ifndef _DETOURS_H_
 #define _DETOURS_H_
 
-#define DETOURS_VERSION     0x4c0c1   // 0xMAJORcMINORcPATCH
-
-//////////////////////////////////////////////////////////////////////////////
-//
-
 #if __has_include(<wdm.h>)
 #define DETOURS_KERNEL
 #endif
 
 #ifdef DETOURS_KERNEL
-#include "api_thunks.h"
+#include <minwindef.h>
+#include <ntimage.h>
 #endif
+
+#define DETOURS_VERSION     0x4c0c1   // 0xMAJORcMINORcPATCH
 
 //////////////////////////////////////////////////////////////////////////////
 //

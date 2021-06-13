@@ -21,6 +21,7 @@
 
 #ifdef DETOURS_KERNEL
 #include <ntifs.h>
+#include "api_thunks.h"
 #else
 #include <windows.h>
 #endif
