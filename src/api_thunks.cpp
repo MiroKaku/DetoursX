@@ -15,7 +15,7 @@
 #pragma warning(disable:4091) // empty typedef
 #endif
 
-#if __has_include(<wdm.h>)
+#if defined(_KERNEL_MODE)
 #define DETOURS_KERNEL
 #endif
 

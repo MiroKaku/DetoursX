@@ -15,7 +15,7 @@ Signature   = "$WINDOWS NT$"
 Class       = AntiVirus
 ClassGuid   = {b1d1a169-c54f-4379-81db-bee7d88d7454}
 Provider    = %ManufacturerName%
-CatalogFile = %DriverName%.cat
+CatalogFile = DetoursX.cat
 DriverVer   =
 PnpLockdown = 1
 
@@ -27,7 +27,7 @@ PnpLockdown = 1
 ; DestinationDirs MSDN
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-destinationdirs-section
 [DestinationDirs]
-DefaultDestDir      = 12
+DefaultDestDir = 12
 
 
 ; SourceDisksNames MSDN
@@ -41,27 +41,18 @@ DefaultDestDir      = 12
 ; Each filename entry must specify the exact name of a file on the source disk. 
 ;     You cannot use a %strkey% token to specify the file name.
 [SourceDisksFiles]
-UnittestX.sys        = 1,,
-
-[SourceDisksFiles.x86]
-UnittestX.sys        = 1,,
-
-[SourceDisksFiles.amd64]
-UnittestX.sys        = 1,,
+UnitTest.DetoursX.sys = 1,,
 
 
 ; Copyfiles MSDN:
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-copyfiles-directive
-[Install.Copyfiles.NTx86]
-%DriverName%.sys,%DriverName%.sys,,0x00004022 ; COPYFLG_NOSKIP | COPYFLG_NO_VERSION_DIALOG | COPYFLG_IN_USE_RENAME
-
-[Install.Copyfiles.NTamd64]
-%DriverName%.sys,%DriverName%.sys,,0x00004022
+[Install.Drivers]
+DetoursX.sys,UnitTest.DetoursX.sys,,0x00004022 ; COPYFLG_NOSKIP | COPYFLG_NO_VERSION_DIALOG | COPYFLG_IN_USE_RENAME
 
 ; Delfiles MSDN:
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-delfiles-directive
-[Install.Delfiles]
-%DriverName%.sys
+[Uninstall.Drivers]
+DetoursX.sys
 
 
 ;-------------------------------------------------------------------------
@@ -69,48 +60,35 @@ UnittestX.sys        = 1,,
 ;-------------------------------------------------------------------------
 
 
-[DefaultInstall.NTx86]
-CopyFiles       = Install.Copyfiles.NTx86
-
-[DefaultInstall.NTamd64]
-CopyFiles       = Install.Copyfiles.NTamd64
+[DefaultInstall.NT$ARCH$]
+CopyFiles       = Install.Drivers
 
 
 ; LegacyUninstall MSDN:
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/develop/creating-a-primitive-driver
-[DefaultUninstall.NTx86]
+[DefaultUninstall.NT$ARCH$]
 LegacyUninstall = 1
-DelFiles        = Install.Delfiles
-
-[DefaultUninstall.NTamd64]
-LegacyUninstall = 1
-DelFiles        = Install.Delfiles
+DelFiles        = Uninstall.Drivers
 
 
-[DefaultInstall.NTx86.Services]
+[DefaultInstall.NT$ARCH$.Services]
 ; You may want to add the SPSVCINST_STARTSERVICE flag, like this:
 ;     AddService=%ServiceName%,0x800,InstallService.Arch ; SPSVCINST_STARTSERVICE
 ; AddService MSDN
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-addservice-directive
 AddService=%ServiceName%,,InstallService
 
-[DefaultInstall.NTamd64.Services]
-AddService=%ServiceName%,,InstallService
-
 
 ; DelService MSDN:
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-delservice-directive
-[DefaultUninstall.NTx86.Services]
-DelService = %ServiceName%,0x200
-
-[DefaultUninstall.NTamd64.Services]
+[DefaultUninstall.NT$ARCH$.Services]
 DelService = %ServiceName%,0x200
 
 
 [InstallService]
 DisplayName    = %ServiceName%
 Description    = %ServiceDesc%
-ServiceBinary  = %12%\%DriverName%.sys
+ServiceBinary  = %12%\DetoursX.sys
 ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
 StartType      = 3                  ; 0 = SERVICE_BOOT_START
                                     ; 1 = SERVICE_SYSTEM_START
@@ -127,7 +105,6 @@ ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
 
 [Strings]
 ManufacturerName        = "MiroKaku"
-DriverName              = "UnittestX"
 ServiceName             = "DetoursX"
 ServiceDesc             = "DetoursX Legacy Driver"
 DiskId                  = "DetoursX Device Installation Disk"

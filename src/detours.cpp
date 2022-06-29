@@ -14,7 +14,7 @@
 #pragma warning(disable:4091) // empty typedef
 #endif
 
-#if __has_include(<wdm.h>)
+#if defined(_KERNEL_MODE)
 #define DETOURS_KERNEL
 #endif
 
@@ -62,6 +62,7 @@ C_ASSERT(sizeof(_DETOUR_ALIGN) == 1);
 //
 static void* detour_memory_alloc(size_t size)
 {
+#pragma warning(suppress: 4996)
     return ExAllocatePoolWithTag(NonPagedPool, size, DETOUR_SECTION_HEADER_SIGNATURE);
 }
 

@@ -53,7 +53,7 @@
     <Configuration>Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>DetoursX</RootNamespace>
-    <DriverType>KMDF</DriverType>
+    <DriverType>ExportDriver</DriverType>
     <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -129,35 +129,35 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -165,44 +165,116 @@
       <PreprocessorDefinitions>_DEBUG;WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_DESKTOP=1;WINAPI_PARTITION_SYSTEM=1;WINAPI_PARTITION_APP=1;WINAPI_PARTITION_PC_APP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\DetoursX\inc"
+mkdir "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())"
+copy /y "$(SolutionDir)..\README.md" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\LICENSE" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\src\detours.h" "$(SolutionDir)..\DetoursX\inc\"
+copy /y /b $(OutDir)$(TargetName).lib "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"
+copy /y /b $(OutDir)$(TargetName).pdb "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_DESKTOP=1;WINAPI_PARTITION_SYSTEM=1;WINAPI_PARTITION_APP=1;WINAPI_PARTITION_PC_APP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\DetoursX\inc"
+mkdir "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())"
+copy /y "$(SolutionDir)..\README.md" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\LICENSE" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\src\detours.h" "$(SolutionDir)..\DetoursX\inc\"
+copy /y /b $(OutDir)$(TargetName).lib "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"
+copy /y /b $(OutDir)$(TargetName).pdb "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_DESKTOP=1;WINAPI_PARTITION_SYSTEM=1;WINAPI_PARTITION_APP=1;WINAPI_PARTITION_PC_APP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\DetoursX\inc"
+mkdir "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())"
+copy /y "$(SolutionDir)..\README.md" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\LICENSE" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\src\detours.h" "$(SolutionDir)..\DetoursX\inc\"
+copy /y /b $(OutDir)$(TargetName).lib "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"
+copy /y /b $(OutDir)$(TargetName).pdb "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_DESKTOP=1;WINAPI_PARTITION_SYSTEM=1;WINAPI_PARTITION_APP=1;WINAPI_PARTITION_PC_APP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\DetoursX\inc"
+mkdir "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())"
+copy /y "$(SolutionDir)..\README.md" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\LICENSE" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\src\detours.h" "$(SolutionDir)..\DetoursX\inc\"
+copy /y /b $(OutDir)$(TargetName).lib "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"
+copy /y /b $(OutDir)$(TargetName).pdb "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_DESKTOP=1;WINAPI_PARTITION_SYSTEM=1;WINAPI_PARTITION_APP=1;WINAPI_PARTITION_PC_APP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\DetoursX\inc"
+mkdir "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())"
+copy /y "$(SolutionDir)..\README.md" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\LICENSE" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\src\detours.h" "$(SolutionDir)..\DetoursX\inc\"
+copy /y /b $(OutDir)$(TargetName).lib "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"
+copy /y /b $(OutDir)$(TargetName).pdb "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_DESKTOP=1;WINAPI_PARTITION_SYSTEM=1;WINAPI_PARTITION_APP=1;WINAPI_PARTITION_PC_APP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\DetoursX\inc"
+mkdir "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())"
+copy /y "$(SolutionDir)..\README.md" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\LICENSE" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\src\detours.h" "$(SolutionDir)..\DetoursX\inc\"
+copy /y /b $(OutDir)$(TargetName).lib "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"
+copy /y /b $(OutDir)$(TargetName).pdb "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_DESKTOP=1;WINAPI_PARTITION_SYSTEM=1;WINAPI_PARTITION_APP=1;WINAPI_PARTITION_PC_APP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\DetoursX\inc"
+mkdir "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())"
+copy /y "$(SolutionDir)..\README.md" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\LICENSE" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\src\detours.h" "$(SolutionDir)..\DetoursX\inc\"
+copy /y /b $(OutDir)$(TargetName).lib "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"
+copy /y /b $(OutDir)$(TargetName).pdb "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
       <PreprocessorDefinitions>WINAPI_FAMILY=WINAPI_FAMILY_DESKTOP_APP;WINAPI_PARTITION_DESKTOP=1;WINAPI_PARTITION_SYSTEM=1;WINAPI_PARTITION_APP=1;WINAPI_PARTITION_PC_APP=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)..\DetoursX\inc"
+mkdir "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())"
+copy /y "$(SolutionDir)..\README.md" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\LICENSE" "$(SolutionDir)..\DetoursX\"
+copy /y "$(SolutionDir)..\src\detours.h" "$(SolutionDir)..\DetoursX\inc\"
+copy /y /b $(OutDir)$(TargetName).lib "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"
+copy /y /b $(OutDir)$(TargetName).pdb "$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

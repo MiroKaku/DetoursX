@@ -43,6 +43,7 @@
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>UnittestX</RootNamespace>
     <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <ProjectName>UnitTest.DetoursX</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -50,7 +51,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>KMDF</DriverType>
+    <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -58,7 +59,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>KMDF</DriverType>
+    <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -66,7 +67,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>KMDF</DriverType>
+    <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -74,7 +75,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>KMDF</DriverType>
+    <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
@@ -82,7 +83,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>KMDF</DriverType>
+    <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
@@ -90,7 +91,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>KMDF</DriverType>
+    <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
@@ -98,7 +99,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>KMDF</DriverType>
+    <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
@@ -106,7 +107,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
     <ConfigurationType>Driver</ConfigurationType>
-    <DriverType>KMDF</DriverType>
+    <DriverType>WDM</DriverType>
     <DriverTargetPlatform>Universal</DriverTargetPlatform>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -119,83 +120,139 @@
   <PropertyGroup />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <OutDir>$(SolutionDir)..\build\$(SDKIdentifier.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
+    <OutDir>$(SolutionDir)..\build\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</OutDir>
     <IntDir>$(SolutionDir)..\build\.objs\$(MSBuildProjectName.ToLower())\$(PlatformShortName.ToLower())\$(ConfigurationName.ToLower())\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\DetoursX\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\DetoursX\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\DetoursX\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\DetoursX\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\DetoursX\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\DetoursX\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\DetoursX\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
       <AdditionalOptions>/INTEGRITYCHECK %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\DetoursX\lib\$(PlatformShortName.ToLower())\$(Configuration.ToLower())\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\DetoursX\inc\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <DriverSign>
+      <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
+    </DriverSign>
   </ItemDefinitionGroup>
   <ItemGroup>
     <FilesToPackage Include="$(TargetPath)" />
@@ -209,7 +266,7 @@
     <ClCompile Include="..\test\unittest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="..\test\unittest.inf" />
+    <Inf Include="..\test\DetoursX.inf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

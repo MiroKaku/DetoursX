@@ -12,6 +12,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="..\test\unittest.inf" />
+    <Inf Include="..\test\DetoursX.inf" />
   </ItemGroup>
 </Project>

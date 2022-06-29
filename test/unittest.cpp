@@ -1,10 +1,6 @@
-#if __has_include(<wdm.h>)
-#define KERNEL_MODE
-#endif
-
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
 #include <ntifs.h>
-#include "../src/detours.h"
+#include <ntddk.h>
 #else
 #define WIN32_LEAN_AND_MEAN
 #define UMDF_USING_NTSTATUS
@@ -12,16 +8,15 @@
 #include <windows.h>
 #include <winternl.h>
 #include <ntstatus.h>
-#include "../Detours/src/detours.h"
-
 #pragma comment(lib, "ntdll")
 #endif
+
+#include <detours.h>
 #include <stdlib.h>
 
 #pragma warning(disable:4996)
 
-
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
 #define LOG(_0, _1, ...) DbgPrintEx(_0, _1, __VA_ARGS__)
 #else
 static void DbgPrint(
@@ -60,7 +55,7 @@ static void DbgPrint(
 #endif
 
 
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
 EXTERN_C struct _PEB32* NTAPI PsGetProcessWow64Process(
     _In_ PEPROCESS Process
 );
@@ -136,7 +131,7 @@ namespace Hook
         IdxOfZwCreateFile
     };
 
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
     volatile long _locks[2][256] = { { false },{ false } };
     inline volatile long& _lock(size_t idx) {
         return _locks[idx][KeGetCurrentProcessorNumber()];
@@ -166,7 +161,7 @@ namespace Hook
                 ObjectAttributes ? ObjectAttributes->ObjectName : nullptr);
         }
 
-#ifndef KERNEL_MODE
+#ifndef _KERNEL_MODE
         UNICODE_STRING Match = RTL_CONSTANT_STRING(L"*\\123.TXT");
         if (ObjectAttributes && RtlIsNameInExpression(&Match, ObjectAttributes->ObjectName, TRUE, NULL)) {
 
@@ -205,7 +200,7 @@ namespace Hook
                 ObjectAttributes ? ObjectAttributes->ObjectName : nullptr);
         }
 
-#ifndef KERNEL_MODE
+#ifndef _KERNEL_MODE
         UNICODE_STRING Match = RTL_CONSTANT_STRING(L"*\\123.TXT");
         if (ObjectAttributes && RtlIsNameInExpression(&Match, ObjectAttributes->ObjectName, TRUE, NULL)) {
 
@@ -228,7 +223,7 @@ namespace Hook
 }
 
 
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
 // Note: https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/windows-kernel-mode-process-and-thread-manager#best
 VOID CreateProcessCallback (
     _Inout_ PEPROCESS Process,
@@ -272,14 +267,14 @@ VOID CreateProcessCallback (
 
                 LPCSTR Dlls[] = {
 #ifdef _WIN64
-                    "C:\\Unittest64.dll",
+                    "C:\\UnitTest.Detours64.dll",
 #else
-                    "C:\\Unittest32.dll",
+                    "C:\\UnitTest.Detours32.dll",
 #endif
                 };
 
                 if (WorkItem->IsWow64Target) {
-                    Dlls[0] = "C:\\Unittest32.dll";
+                    Dlls[0] = "C:\\UnitTest.Detours32.dll";
                 }
 
                 if (DetourUpdateProcessWithDll(WorkItem->Target, Dlls, _countof(Dlls))) {
@@ -303,13 +298,13 @@ VOID CreateProcessCallback (
 #endif
 
 
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
 EXTERN_C VOID DriverUnload(PDRIVER_OBJECT)
 #else
 EXTERN_C VOID MainExit()
 #endif
 {
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
     PsSetCreateProcessNotifyRoutineEx(CreateProcessCallback, true);
 #endif
 
@@ -325,13 +320,13 @@ EXTERN_C VOID MainExit()
 }
 
 
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
 EXTERN_C NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING)
 #else
 EXTERN_C int MainEntry()
 #endif
 {
-#ifdef KERNEL_MODE
+#ifdef _KERNEL_MODE
     PsSetCreateProcessNotifyRoutineEx(CreateProcessCallback, false);
     DriverObject->DriverUnload = DriverUnload;
 #else
@@ -354,7 +349,7 @@ EXTERN_C int MainEntry()
 }
 
 
-#ifndef KERNEL_MODE
+#ifndef _KERNEL_MODE
 EXTERN_C BOOL WINAPI DllMain(_In_ void * /*DllHandle*/, _In_ unsigned Reason, _In_opt_ void * /*Reserved*/) {
     if (Reason == DLL_PROCESS_ATTACH) {
         MainEntry();

@@ -11,7 +11,7 @@
 #ifndef _DETOURS_H_
 #define _DETOURS_H_
 
-#if __has_include(<wdm.h>)
+#if defined(_KERNEL_MODE)
 #define DETOURS_KERNEL
 #endif
 

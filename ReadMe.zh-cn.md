@@ -1,6 +1,5 @@
 # [DetoursX](https://github.com/mirokaku/DetoursX)
 
-[![Actions Status](https://github.com/MiroKaku/DetoursX/workflows/CodeQL/badge.svg)](https://github.com/MiroKaku/DetoursX/actions)
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/MiroKaku/DetoursX/blob/master/LICENSE)
 ![Windows](https://img.shields.io/badge/Windows-10+-orange.svg)
 ![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2019-purple.svg)
@@ -35,3 +34,9 @@ DetoursX 是基于微软 [Detours 4.0.1](https://github.com/microsoft/Detours/tr
 ## 文档
 
 [Microsoft Detours Wiki](https://github.com/microsoft/Detours/wiki)
+
+## 许可证
+
+微软公司©版权所有，保留所有权利。
+
+根据 [MIT](https://github.com/microsoft/Detours/blob/master/LICENSE.md) 许可证获得许可。

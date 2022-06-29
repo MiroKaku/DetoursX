@@ -15,5 +15,6 @@
     <None Include="..\test\module.def">
       <Filter>src</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

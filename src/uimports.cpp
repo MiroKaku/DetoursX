@@ -16,6 +16,7 @@
 
 static void* detour_memory_alloc(size_t size)
 {
+#pragma warning(suppress: 4996)
     return ExAllocatePoolWithTag(NonPagedPool, size, DETOUR_SECTION_HEADER_SIGNATURE);
 }
 
