@@ -19,18 +19,15 @@
 #define DETOURS_KERNEL
 #endif
 
-#ifdef DETOURS_KERNEL
-#include <ntifs.h>
-#include "api_thunks.h"
-#endif
+#include <Veil.h>
 
 #ifdef DETOURS_KERNEL
+
+namespace Detours::Thunks
+{
 
 //////////////////////////////////////////////////////////////////////////////
 //
-
-#define PROCESS_VM_READ                 (0x0010)
-#define PROCESS_VM_WRITE                (0x0020)  
 
 // Zw
 
@@ -200,14 +197,14 @@ NTSTATUS NTAPI ZwWriteVirtualMemory(
 
 // Set/Get Last Error
 
-static long __Win32Error = NO_ERROR;
+static DWORD __Win32Error = NO_ERROR;
 
-VOID WINAPI SetLastError(_In_ LONG Win32Error)
+VOID WINAPI SetLastError(_In_ DWORD Win32Error)
 {
     __Win32Error = Win32Error;
 }
 
-LONG WINAPI GetLastError(VOID)
+DWORD WINAPI GetLastError(VOID)
 {
     return __Win32Error;
 }
@@ -315,10 +312,10 @@ BOOL WINAPI WriteProcessMemory(
     _Out_opt_ SIZE_T * lpNumberOfBytesWritten
 )
 {
-    NTSTATUS Status = STATUS_UNSUCCESSFUL, xStatus = STATUS_UNSUCCESSFUL;
+    NTSTATUS Status;
     ULONG OldProtect = PAGE_READWRITE;
-    SIZE_T RegionSize = 0u;
-    PVOID Base = NULL;
+    SIZE_T RegionSize;
+    PVOID Base;
     SIZE_T NtNumberOfBytesWritten = 0u;
 
     //
@@ -348,7 +345,7 @@ BOOL WINAPI WriteProcessMemory(
             (OldProtect & PAGE_EXECUTE_READWRITE) == PAGE_EXECUTE_READWRITE ||
             (OldProtect & PAGE_EXECUTE_WRITECOPY) == PAGE_EXECUTE_WRITECOPY) {
 
-            Status = ZwProtectVirtualMemory(
+            (void)ZwProtectVirtualMemory(
                 hProcess,
                 &Base,
                 &RegionSize,
@@ -384,14 +381,14 @@ BOOL WINAPI WriteProcessMemory(
             if ((OldProtect & PAGE_NOACCESS) == PAGE_NOACCESS ||
                 (OldProtect & PAGE_READONLY) == PAGE_READONLY) {
 
-                Status = ZwProtectVirtualMemory(
+                (void)ZwProtectVirtualMemory(
                     hProcess,
                     &Base,
                     &RegionSize,
                     OldProtect,
                     &OldProtect
                 );
-                SetLastError(STATUS_ACCESS_VIOLATION);
+                SetLastError((DWORD)STATUS_ACCESS_VIOLATION);
                 return FALSE;
             }
             else {
@@ -414,7 +411,7 @@ BOOL WINAPI WriteProcessMemory(
                     *lpNumberOfBytesWritten = NtNumberOfBytesWritten;
                 }
 
-                xStatus = ZwProtectVirtualMemory(
+                (void)ZwProtectVirtualMemory(
                     hProcess,
                     &Base,
                     &RegionSize,
@@ -422,10 +419,10 @@ BOOL WINAPI WriteProcessMemory(
                     &OldProtect
                 );
                 if (!NT_SUCCESS(Status)) {
-                    SetLastError(STATUS_ACCESS_VIOLATION);
-                    return STATUS_ACCESS_VIOLATION;
+                    SetLastError((DWORD)STATUS_ACCESS_VIOLATION);
+                    return FALSE;
                 }
-                ZwFlushInstructionCache(hProcess, lpBaseAddress, nSize);
+                (void)ZwFlushInstructionCache(hProcess, lpBaseAddress, nSize);
                 return TRUE;
             }
         }
@@ -446,7 +443,7 @@ LPVOID WINAPI VirtualAllocEx(
     _In_ DWORD flProtect
 )
 {
-    NTSTATUS Status = STATUS_UNSUCCESSFUL;
+    NTSTATUS Status;
 
     __try {
         Status = NtAllocateVirtualMemory(hProcess,
@@ -476,10 +473,10 @@ BOOL WINAPI VirtualFreeEx(
     _In_ DWORD dwFreeType
 )
 {
-    NTSTATUS Status = STATUS_UNSUCCESSFUL;
+    NTSTATUS Status;
 
     if ((dwFreeType & MEM_RELEASE) && dwSize != 0) {
-        SetLastError(STATUS_INVALID_PARAMETER);
+        SetLastError((DWORD)STATUS_INVALID_PARAMETER);
         return FALSE;
     }
 
@@ -506,7 +503,7 @@ BOOL WINAPI VirtualProtectEx(
     _In_ DWORD flNewProtect,
     _Out_ PDWORD lpflOldProtect)
 {
-    NTSTATUS Status = STATUS_UNSUCCESSFUL;
+    NTSTATUS Status;
 
     Status = ZwProtectVirtualMemory(
         hProcess,
@@ -529,7 +526,7 @@ SIZE_T WINAPI VirtualQueryEx(
     _Out_writes_bytes_to_(dwLength, return) PMEMORY_BASIC_INFORMATION lpBuffer,
     _In_ SIZE_T dwLength)
 {
-    NTSTATUS Status = STATUS_UNSUCCESSFUL;
+    NTSTATUS Status;
     SIZE_T ReturnLength = 0u;
 
     Status = ZwQueryVirtualMemory(
@@ -548,4 +545,6 @@ SIZE_T WINAPI VirtualQueryEx(
     return 0;
 }
 
-#endif
+}
+
+#endif // DETOURS_KERNEL

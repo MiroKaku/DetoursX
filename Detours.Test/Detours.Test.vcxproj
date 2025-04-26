@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2AAF9051-80FB-47C7-BC5A-C24FA1CF7B04}</ProjectGuid>
+    <ProjectName>Detours.Test</ProjectName>
+    <RootNamespace>Detours.Test</RootNamespace>
+    <MileProjectType>DynamicLibrary</MileProjectType>
+    <MileProjectEnableVCLTLSupport>true</MileProjectEnableVCLTLSupport>
+  </PropertyGroup>
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Platform.x86.props" />
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Platform.x64.props" />
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Platform.ARM64.props" />
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Cpp.Default.props" />
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Cpp.props" />
+  <PropertyGroup Label="Configuration">
+    <OutDir>$(MileProjectBinariesPath)$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(MileProjectObjectsPath)$(Configuration)\$(MSBuildProjectName)\$(Platform)\</IntDir>
+    <GeneratedFilesDir>$(IntDir)Generated Files\</GeneratedFilesDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(PublishDirectory)\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <ModuleDefinitionFile>Module.def</ModuleDefinitionFile>
+      <AdditionalLibraryDirectories>$(PublishDirectory)Library\$(Configuration)\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Detours.StaticLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="Module.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="VC-LTL">
+      <Version>5.2.1</Version>
+    </PackageReference>
+    <PackageReference Update="YY-Thunks">
+      <Version>1.1.6</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Cpp.targets" />
+</Project>

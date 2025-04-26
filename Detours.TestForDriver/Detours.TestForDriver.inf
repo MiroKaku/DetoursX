@@ -1,8 +1,9 @@
 ;-------------------------------------------------------------------------
-; DetoursX.INF -- NT Legacy Driver
+; Detours.TestForDriver.INF -- NT Legacy Driver
 ;
 ; Copyright (c) 2019, Microsoft.Com LLC.  All rights reserved.
 ;------------------------------------------------------------------------
+
 
 ; INF MSDN:
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/roadmap-for-device-and-driver-installation--windows-vista-and-later-
@@ -15,9 +16,10 @@ Signature   = "$WINDOWS NT$"
 Class       = AntiVirus
 ClassGuid   = {b1d1a169-c54f-4379-81db-bee7d88d7454}
 Provider    = %ManufacturerName%
-CatalogFile = DetoursX.cat
+CatalogFile = Detours.TestForDriver.cat
 DriverVer   =
 PnpLockdown = 1
+
 
 ;-------------------------------------------------------------------------
 ; Installation Section
@@ -27,7 +29,7 @@ PnpLockdown = 1
 ; DestinationDirs MSDN
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-destinationdirs-section
 [DestinationDirs]
-DefaultDestDir = 12
+DefaultDestDir      = 12
 
 
 ; SourceDisksNames MSDN
@@ -41,18 +43,19 @@ DefaultDestDir = 12
 ; Each filename entry must specify the exact name of a file on the source disk. 
 ;     You cannot use a %strkey% token to specify the file name.
 [SourceDisksFiles]
-UnitTest.DetoursX.sys = 1,,
+Detours.TestForDriver.sys        = 1,,
 
 
 ; Copyfiles MSDN:
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-copyfiles-directive
 [Install.Drivers]
-DetoursX.sys,UnitTest.DetoursX.sys,,0x00004022 ; COPYFLG_NOSKIP | COPYFLG_NO_VERSION_DIALOG | COPYFLG_IN_USE_RENAME
+Detours.TestForDriver.sys,Detours.TestForDriver.sys,,0x00004002 ; COPYFLG_NOSKIP | COPYFLG_IN_USE_RENAME
+
 
 ; Delfiles MSDN:
 ;     https://docs.microsoft.com/en-us/windows-hardware/drivers/install/inf-delfiles-directive
 [Uninstall.Drivers]
-DetoursX.sys
+Detours.TestForDriver.sys
 
 
 ;-------------------------------------------------------------------------
@@ -88,7 +91,7 @@ DelService = %ServiceName%,0x200
 [InstallService]
 DisplayName    = %ServiceName%
 Description    = %ServiceDesc%
-ServiceBinary  = %12%\DetoursX.sys
+ServiceBinary  = %12%\Detours.TestForDriver.sys
 ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
 StartType      = 3                  ; 0 = SERVICE_BOOT_START
                                     ; 1 = SERVICE_SYSTEM_START
@@ -104,7 +107,7 @@ ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
 
 
 [Strings]
-ManufacturerName        = "MiroKaku"
-ServiceName             = "DetoursX"
-ServiceDesc             = "DetoursX Legacy Driver"
-DiskId                  = "DetoursX Device Installation Disk"
+ManufacturerName        = "MeeSong"
+ServiceName             = "Detours.TestForDriver"
+ServiceDesc             = "Detours.TestForDriver Legacy Driver"
+DiskId                  = "Detours.TestForDriver Device Installation Disk"

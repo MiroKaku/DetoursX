@@ -16,13 +16,21 @@
 
 static void* detour_memory_alloc(size_t size)
 {
+#ifdef DETOURS_KERNEL
 #pragma warning(suppress: 4996)
     return ExAllocatePoolWithTag(NonPagedPool, size, DETOUR_SECTION_HEADER_SIGNATURE);
+#else
+    return RtlAllocateHeap(RtlProcessHeap(), HEAP_ZERO_MEMORY, size);
+#endif
 }
 
 static void  detour_memory_free(void* p)
 {
+#ifdef DETOURS_KERNEL
     ExFreePoolWithTag(p, DETOUR_SECTION_HEADER_SIGNATURE);
+#else
+    RtlFreeHeap(RtlProcessHeap(), 0, p);
+#endif
 }
 
 // UpdateImports32 aka UpdateImports64
@@ -112,7 +120,7 @@ static BOOL UPDATE_IMPORTS_XX(HANDLE hProcess,
         }
     }
 
-    DETOUR_TRACE(("     Imports: %p..%p\n",
+    DETOUR_TRACE(("     Imports: %Ix..%Ix\n",
                   (DWORD_PTR)pbModule + inh.IMPORT_DIRECTORY.VirtualAddress,
                   (DWORD_PTR)pbModule + inh.IMPORT_DIRECTORY.VirtualAddress +
                   inh.IMPORT_DIRECTORY.Size));

@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{17B37D16-1230-464F-B3F8-F595C6E8B6FD}</ProjectGuid>
+    <ProjectName>Detours.StaticLibraryForDriver</ProjectName>
+    <RootNamespace>Detours</RootNamespace>
+    <MileProjectType>StaticLibrary</MileProjectType>
+    <MileProjectUseKernelMode>true</MileProjectUseKernelMode>
+    <MileProjectUseWindowsDriverKit>true</MileProjectUseWindowsDriverKit>
+  </PropertyGroup>
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Platform.x86.props" />
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Platform.x64.props" />
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Platform.ARM64.props" />
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Cpp.Default.props" />
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Cpp.props" />
+  <PropertyGroup Label="Configuration">
+    <OutDir>$(MileProjectBinariesPath)$(Configuration)\$(Platform)\</OutDir>
+    <IntDir>$(MileProjectObjectsPath)$(Configuration)\$(MSBuildProjectName)\$(Platform)\</IntDir>
+    <GeneratedFilesDir>$(IntDir)Generated Files\</GeneratedFilesDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Target Name="CustomPublish" AfterTargets="Build">
+    <ItemGroup>
+      <DetoursHeaders Include="$(DetoursDirectory)\detours.h" />
+      <DetoursProduct Include="$(OutDir)$(TargetName).lib" />
+      <DetoursProduct Include="$(OutDir)$(TargetName).pdb" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DetoursHeaders)" DestinationFolder="$(PublishDirectory)Include" />
+    <Copy SourceFiles="@(DetoursProduct)" DestinationFolder="$(PublishDirectory)Library\$(Configuration)\$(Platform)" />
+  </Target>
+  <ItemGroup>
+    <ClInclude Include="$(DetoursDirectory)detours.h" />
+    <ClInclude Include="$(DetoursDirectory)api_thunks.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(DetoursDirectory)api_thunks.cpp" />
+    <ClCompile Include="$(DetoursDirectory)creatwth.cpp" />
+    <ClCompile Include="$(DetoursDirectory)detoursx.cpp" />
+    <ClCompile Include="$(DetoursDirectory)disasm.cpp" />
+    <ClCompile Include="$(DetoursDirectory)disolarm.cpp" />
+    <ClCompile Include="$(DetoursDirectory)disolarm64.cpp" />
+    <ClCompile Include="$(DetoursDirectory)disolia64.cpp" />
+    <ClCompile Include="$(DetoursDirectory)disolx64.cpp" />
+    <ClCompile Include="$(DetoursDirectory)disolx86.cpp" />
+  </ItemGroup>
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Cpp.targets" />
+</Project>

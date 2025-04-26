@@ -2,9 +2,9 @@
 
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/MiroKaku/DetoursX/blob/master/LICENSE)
 ![Windows](https://img.shields.io/badge/Windows-10+-orange.svg)
-![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2019-purple.svg)
+![Visual Studio](https://img.shields.io/badge/Visual%20Studio-2022-purple.svg)
 
-* [简体中文](ReadMe.zh-cn.md)
+* [简体中文](https://github.com/MiroKaku/DetoursX/blob/master/README.zh-CN.md)
 
 ## About
 

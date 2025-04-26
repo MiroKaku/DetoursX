@@ -16,13 +16,13 @@
 #define DETOURS_KERNEL
 #endif
 
+#define _CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS 1
 #define _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE 1
 
+#include <Veil.h>
+
 #ifdef DETOURS_KERNEL
-#include <ntifs.h>
 #include "api_thunks.h"
-#else
-#include <windows.h>
 #endif
 
 #include <limits.h>
@@ -311,20 +311,20 @@ class CDetourDis
     static BOOL             s_fLimitReferencesToModule;
 
   protected:
-    BOOL                m_bOperandOverride;
-    BOOL                m_bAddressOverride;
-    BOOL                m_bRaxOverride; // AMD64 only
-    BOOL                m_bVex;
-    BOOL                m_bF2;
-    BOOL                m_bF3; // x86 only
-    BYTE                m_nSegmentOverride;
+    BOOL                m_bOperandOverride = FALSE;
+    BOOL                m_bAddressOverride = FALSE;
+    BOOL                m_bRaxOverride = FALSE; // AMD64 only
+    BOOL                m_bVex = FALSE;
+    BOOL                m_bF2 = FALSE;
+    BOOL                m_bF3 = FALSE; // x86 only
+    BYTE                m_nSegmentOverride = 0;
 
-    PBYTE *             m_ppbTarget;
-    LONG *              m_plExtra;
+    PBYTE *             m_ppbTarget = NULL;
+    LONG *              m_plExtra = NULL;
 
-    LONG                m_lScratchExtra;
-    PBYTE               m_pbScratchTarget;
-    BYTE                m_rbScratchDst[64];
+    LONG                m_lScratchExtra = 0;
+    PBYTE               m_pbScratchTarget = NULL;
+    BYTE                m_rbScratchDst[64] = { 0 };
 };
 
 PVOID WINAPI DetourCopyInstruction(_In_opt_ PVOID pDst,
@@ -2554,11 +2554,11 @@ class CDetourDis
     }
 
   protected:
-    PBYTE   m_pbTarget;
-    PBYTE   m_pbPool;
-    LONG    m_lExtra;
+    PBYTE   m_pbTarget = NULL;
+    PBYTE   m_pbPool = NULL;
+    LONG    m_lExtra = 0;
 
-    BYTE    m_rbScratchDst[64];
+    BYTE    m_rbScratchDst[64] = { 0 };
 
     static const COPYENTRY s_rceCopyTable[33];
 };
@@ -3876,8 +3876,8 @@ class CDetourDis
     }
 
   protected:
-    PBYTE   m_pbTarget;
-    BYTE    m_rbScratchDst[64];
+    PBYTE   m_pbTarget = NULL;
+    BYTE    m_rbScratchDst[64] = { 0 };
 };
 
 BYTE CDetourDis::PureCopy32(BYTE* pSource, BYTE* pDest)
@@ -4219,29 +4219,31 @@ PVOID WINAPI DetourCopyInstruction(_In_opt_ PVOID pDst,
 
 #endif // DETOURS_ARM64
 
-//BOOL WINAPI DetourSetCodeModule(_In_ HMODULE hModule,
-//                                _In_ BOOL fLimitReferencesToModule)
-//{
-//#if defined(DETOURS_X64) || defined(DETOURS_X86)
-//    PBYTE pbBeg = NULL;
-//    PBYTE pbEnd = (PBYTE)~(ULONG_PTR)0;
-//
-//    if (hModule != NULL) {
-//        ULONG cbModule = DetourGetModuleSize(hModule);
-//
-//        pbBeg = (PBYTE)hModule;
-//        pbEnd = (PBYTE)hModule + cbModule;
-//    }
-//
-//    return CDetourDis::SetCodeModule(pbBeg, pbEnd, fLimitReferencesToModule);
-//#elif defined(DETOURS_ARM) || defined(DETOURS_ARM64) || defined(DETOURS_IA64)
-//    (void)hModule;
-//    (void)fLimitReferencesToModule;
-//    return TRUE;
-//#else
-//#error unknown architecture (x86, x64, arm, arm64, ia64)
-//#endif
-//}
+#ifndef DETOURS_KERNEL
+BOOL WINAPI DetourSetCodeModule(_In_ HMODULE hModule,
+                                _In_ BOOL fLimitReferencesToModule)
+{
+#if defined(DETOURS_X64) || defined(DETOURS_X86)
+    PBYTE pbBeg = NULL;
+    PBYTE pbEnd = (PBYTE)~(ULONG_PTR)0;
+
+    if (hModule != NULL) {
+        ULONG cbModule = DetourGetModuleSize(hModule);
+
+        pbBeg = (PBYTE)hModule;
+        pbEnd = (PBYTE)hModule + cbModule;
+    }
+
+    return CDetourDis::SetCodeModule(pbBeg, pbEnd, fLimitReferencesToModule);
+#elif defined(DETOURS_ARM) || defined(DETOURS_ARM64) || defined(DETOURS_IA64)
+    (void)hModule;
+    (void)fLimitReferencesToModule;
+    return TRUE;
+#else
+#error unknown architecture (x86, x64, arm, arm64, ia64)
+#endif
+}
+#endif //!DETOURS_KERNEL
 
 //
 ///////////////////////////////////////////////////////////////// End of File.

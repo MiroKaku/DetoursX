@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+This file allow for customizing your build process.
+See: https://learn.microsoft.com/visualstudio/msbuild/customize-your-build
+-->
+<Project>
+  <!--
+  Uncomment if you need to enable inclusion of another Directory.Build.props file from a parent directory
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+  -->
+  <PropertyGroup>
+    <DetoursDirectory>$(MSBuildThisFileDirectory)Detours\</DetoursDirectory>
+    <PublishDirectory>$(MSBuildThisFileDirectory)Publish\</PublishDirectory>
+    <MileProjectOutputPath>$(MSBuildThisFileDirectory)Output\</MileProjectOutputPath>
+  </PropertyGroup>
+
+  <Import Sdk="Mile.Project.Configurations" Project="Mile.Project.Build.props" />
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(DetoursDirectory);$(MSBuildProjectDirectory);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <PropertyGroup>
+    <ReplaceWildcardsInProjectItems>true</ReplaceWildcardsInProjectItems>
+    <ForceImportAfterCppProps>$(MSBuildThisFileDirectory)\Directory.Packages.Cpp.props</ForceImportAfterCppProps>
+  </PropertyGroup>
+</Project>
