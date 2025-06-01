@@ -16,6 +16,6 @@
     <!--
     <PackageReference Include="Microsoft.Windows.CppWinRT" Version="2.0.240405.15" />
     -->
-    <PackageReference Include="Musa.Veil" Version="1.3.2" />
+    <PackageReference Include="Musa.Veil" Version="1.4.1" />
   </ItemGroup>
 </Project>

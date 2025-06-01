@@ -6,13 +6,13 @@
   </Configurations>
   <Project Path="Detours.StaticLibrary/Detours.StaticLibrary.vcxproj" Id="265b8ace-dd59-45fb-a26c-3afaa8f96469" />
   <Project Path="Detours.StaticLibraryForDriver/Detours.StaticLibraryForDriver.vcxproj" Id="17b37d16-1230-464f-b3f8-f595c6e8b6fd">
-    <Deploy />
+    <Build Solution="*|x86" Project="false" />
   </Project>
   <Project Path="Detours.Test/Detours.Test.vcxproj" Id="2aaf9051-80fb-47c7-bc5a-c24fa1cf7b04">
     <BuildDependency Project="Detours.StaticLibrary/Detours.StaticLibrary.vcxproj" />
   </Project>
   <Project Path="Detours.TestForDriver/Detours.TestForDriver.vcxproj" Id="46eb96df-1785-4374-bfe5-a9f44f5670c0">
     <BuildDependency Project="Detours.StaticLibraryForDriver/Detours.StaticLibraryForDriver.vcxproj" />
-    <Deploy />
+    <Build Solution="*|x86" Project="false" />
   </Project>
 </Solution>

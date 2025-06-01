@@ -16,21 +16,21 @@ namespace Hook
 {
     class DetourLockGuard
     {
-        volatile long& _Atom;
+        volatile long& mAtom;
 
     public:
         explicit DetourLockGuard(volatile long& atom) noexcept
-            : _Atom(atom)
+            : mAtom(atom)
         {
-            InterlockedCompareExchange(&_Atom, true, false);
+            InterlockedCompareExchange(&mAtom, true, false);
         }
         ~DetourLockGuard()
         {
-            InterlockedCompareExchange(&_Atom, false, true);
+            InterlockedCompareExchange(&mAtom, false, true);
         }
     };
 
-    enum : size_t {
+    enum : uint8_t {
         IdxOfMmIsAddressValid = 0u,
     };
 
@@ -87,22 +87,22 @@ namespace Hook
 
              PIO_WORKITEM WorkItem = IoAllocateWorkItem((PDEVICE_OBJECT)MainDriverObject);
              IoQueueWorkItemEx(WorkItem, [](
-                 _In_ PVOID IoObject, _In_opt_ PVOID Context, _In_ PIO_WORKITEM IoWorkItem)
+                 _In_ PVOID IoObject, _In_opt_ PVOID Handle, _In_ PIO_WORKITEM IoWorkItem)
              {
                  UNREFERENCED_PARAMETER(IoObject);
 
-                 if (Context) {
+                 if (Handle) {
                      LPCSTR Dlls[] = {
                          "C:\\Detours.Test.dll",
                      };
 
-                     if (DetourUpdateProcessWithDll(Context, Dlls, _countof(Dlls))) {
-                         for (size_t i = 0; i < _countof(Dlls); ++i) {
-                             LOG("Import %s to NOTEPAD.EXE", Dlls[i]);
+                     if (DetourUpdateProcessWithDll(Handle, Dlls, _countof(Dlls))) {
+                         for (const auto& Dll : Dlls) {
+                             LOG("Import %s to NOTEPAD.EXE", Dll);
                          }
                      }
 
-                     (void)ObCloseHandle(Context, KernelMode);
+                     (void)ObCloseHandle(Handle, KernelMode);
                  }
 
                  if (IoWorkItem) {
@@ -130,13 +130,15 @@ namespace Detours::Test
             return Status;
         }
 
-        //DetourTransactionBegin();
-        //DetourUpdateThread(ZwCurrentThread());
-        //{
-        //    Hook::_MmIsAddressValid = MmIsAddressValid;
-        //    DetourAttach((void**)&Hook::_MmIsAddressValid, Hook::MmIsAddressValid);
-        //}
-        //DetourTransactionCommit();
+        DetourTransactionBegin();
+        DetourUpdateThread(ZwCurrentThread());
+        {
+            Hook::_MmIsAddressValid = MmIsAddressValid;
+            DetourAttach((void**)&Hook::_MmIsAddressValid, Hook::MmIsAddressValid);
+        }
+        DetourTransactionCommit();
+
+        MmIsAddressValid((PVOID)(LONG_PTR)0x1111222233334444);
 
         LOG("Exit");
 
@@ -147,14 +149,14 @@ namespace Detours::Test
     {
         LOG("Enter");
 
-        PsSetCreateProcessNotifyRoutineEx(Hook::CreateProcessCallback, true);
+        (void)PsSetCreateProcessNotifyRoutineEx(Hook::CreateProcessCallback, true);
 
-        //DetourTransactionBegin();
-        //DetourUpdateThread(ZwCurrentThread());
-        //{
-        //    DetourDetach((void**)&Hook::_MmIsAddressValid, Hook::MmIsAddressValid);
-        //}
-        //DetourTransactionCommit();
+        DetourTransactionBegin();
+        DetourUpdateThread(ZwCurrentThread());
+        {
+            DetourDetach((void**)&Hook::_MmIsAddressValid, Hook::MmIsAddressValid);
+        }
+        DetourTransactionCommit();
 
         LOG("Exit");
     }

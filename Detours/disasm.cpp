@@ -242,9 +242,11 @@ class CDetourDis
 #ifdef DETOURS_X64
 #define ENTRY_CopyBytes3Or5Rax      5, 3, 0, 0, 0, RAX, &CDetourDis::CopyBytes
 #define ENTRY_CopyBytes3Or5Target   5, 5, 0, 1, 0, 0, &CDetourDis::CopyBytes
+#define ENTRY_CopyBytesJumpToAbsolute  5, 5, 0, 1, 0, 0, &CDetourDis::CopyBytesJumpToAbsolute
 #else
 #define ENTRY_CopyBytes3Or5Rax      5, 3, 0, 0, 0, 0, &CDetourDis::CopyBytes
 #define ENTRY_CopyBytes3Or5Target   5, 3, 0, 1, 0, 0, &CDetourDis::CopyBytes
+#define ENTRY_CopyBytesJumpToAbsolute ENTRY_CopyBytes3Or5Target
 #endif
 #define ENTRY_CopyBytes4            4, 4, 0, 0, 0, 0, &CDetourDis::CopyBytes
 #define ENTRY_CopyBytes5            5, 5, 0, 0, 0, 0, &CDetourDis::CopyBytes
@@ -280,6 +282,7 @@ class CDetourDis
     PBYTE CopyBytesSegment(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc);
     PBYTE CopyBytesRax(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc);
     PBYTE CopyBytesJump(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc);
+    PBYTE CopyBytesJumpToAbsolute(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc);
 
     PBYTE Invalid(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc);
 
@@ -514,6 +517,52 @@ PBYTE CDetourDis::CopyBytesJump(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc)
 
     *m_plExtra = 4;
     return pbSrc + 2;
+}
+
+
+PBYTE CDetourDis::CopyBytesJumpToAbsolute(REFCOPYENTRY pEntry, PBYTE pbDst, PBYTE pbSrc)
+{
+#ifdef DETOURS_KERNEL
+#ifdef DETOURS_X64
+    PVOID pvSrcAddr = &pbSrc[1];
+    LONG_PTR nOldOffset = (LONG_PTR) * (LONG*&)pvSrcAddr;
+    LONG_PTR nNewOffset = (LONG_PTR)(pbSrc + 5 + nOldOffset);
+
+    // call imm32 <offset>
+    if (pbSrc[0] == 0xE8) {
+        // jmp rax, imm64 <address>
+        pbDst[0] = 0x48;
+        pbDst[1] = 0xB8;
+        *(UNALIGNED LONG_PTR*)& pbDst[2] = nNewOffset;
+
+        // call rax
+        pbDst[10] = 0xFF;
+        pbDst[11] = 0xD0;
+
+        *m_plExtra = 12 - 5;
+        *m_ppbTarget = (PBYTE)nNewOffset;
+        return pbSrc + 5;
+    }
+
+    // jmp imm32 <offset>
+    if (pbSrc[0] == 0xE9) {
+        // jmp rax, imm64 <address>
+        pbDst[0] = 0x48;
+        pbDst[1] = 0xB8;
+        *(UNALIGNED LONG_PTR*)&pbDst[2] = nNewOffset;
+
+        // jmp rax
+        pbDst[10] = 0xFF;
+        pbDst[11] = 0xE0;
+
+        *m_plExtra = 12 - 5;
+        *m_ppbTarget = (PBYTE)nNewOffset;
+        return pbSrc + 5;
+    }
+#endif // DETOURS_X64
+#endif // DETOURS_KERNEL
+
+    return CopyBytes(pEntry, pbDst, pbSrc);
 }
 
 PBYTE CDetourDis::AdjustTarget(PBYTE pbDst, PBYTE pbSrc, UINT cbOp,
@@ -1206,8 +1255,8 @@ const CDetourDis::COPYENTRY CDetourDis::s_rceCopyTable[257] =
     { 0xE5, ENTRY_CopyBytes2 },                         // IN id
     { 0xE6, ENTRY_CopyBytes2 },                         // OUT ib
     { 0xE7, ENTRY_CopyBytes2 },                         // OUT ib
-    { 0xE8, ENTRY_CopyBytes3Or5Target },                // CALL cd
-    { 0xE9, ENTRY_CopyBytes3Or5Target },                // JMP cd
+    { 0xE8, ENTRY_CopyBytesJumpToAbsolute },            // CALL cd
+    { 0xE9, ENTRY_CopyBytesJumpToAbsolute },            // JMP cd
 #ifdef DETOURS_X64
     { 0xEA, ENTRY_Invalid },                            // Invalid
 #else

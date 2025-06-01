@@ -25,10 +25,13 @@
   </ItemDefinitionGroup>
   <Target Name="CustomPublish" AfterTargets="Build">
     <ItemGroup>
+      <DetoursLicense Include="$(SolutionDir)\LICENSE" />
+      <DetoursLicense Include="$(SolutionDir)\README.md" />
       <DetoursHeaders Include="$(DetoursDirectory)\detours.h" />
       <DetoursProduct Include="$(OutDir)$(TargetName).lib" />
       <DetoursProduct Include="$(OutDir)$(TargetName).pdb" />
     </ItemGroup>
+    <Copy SourceFiles="@(DetoursLicense)" DestinationFolder="$(PublishDirectory)" />
     <Copy SourceFiles="@(DetoursHeaders)" DestinationFolder="$(PublishDirectory)Include" />
     <Copy SourceFiles="@(DetoursProduct)" DestinationFolder="$(PublishDirectory)Library\$(Configuration)\$(Platform)" />
   </Target>

@@ -2,22 +2,6 @@
 
 namespace Detours::Thunks
 {
-    NTSTATUS NTAPI ZwReadVirtualMemory(
-        _In_ HANDLE ProcessHandle,
-        _In_opt_ PVOID BaseAddress,
-        _Out_writes_bytes_(BufferSize) PVOID Buffer,
-        _In_ SIZE_T BufferSize,
-        _Out_opt_ PSIZE_T NumberOfBytesRead
-    );
-
-    NTSTATUS NTAPI ZwWriteVirtualMemory(
-        _In_ HANDLE ProcessHandle,
-        _In_opt_ PVOID BaseAddress,
-        _In_reads_bytes_(BufferSize) PVOID Buffer,
-        _In_ SIZE_T BufferSize,
-        _Out_opt_ PSIZE_T NumberOfBytesWritten
-    );
-
     VOID WINAPI SetLastError(_In_ DWORD Win32Error);
     DWORD WINAPI GetLastError(VOID);
 
@@ -78,9 +62,6 @@ namespace Detours::Thunks
     );
 
 }
-
-#define ZwReadVirtualMemory ::Detours::Thunks::ZwReadVirtualMemory
-#define ZwWriteVirtualMemory ::Detours::Thunks::ZwWriteVirtualMemory
 
 #define SetLastError ::Detours::Thunks::SetLastError
 #define GetLastError ::Detours::Thunks::GetLastError

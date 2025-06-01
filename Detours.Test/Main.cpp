@@ -11,21 +11,21 @@ namespace Hook
 {
     class DetourLockGuard
     {
-        volatile long& _Atom;
+        volatile long& mAtom;
 
     public:
         explicit DetourLockGuard(volatile long& atom) noexcept
-            : _Atom(atom)
+            : mAtom(atom)
         {
-            InterlockedCompareExchange(&_Atom, true, false);
+            InterlockedCompareExchange(&mAtom, true, false);
         }
         ~DetourLockGuard()
         {
-            InterlockedCompareExchange(&_Atom, false, true);
+            InterlockedCompareExchange(&mAtom, false, true);
         }
     };
 
-    enum : size_t {
+    enum : uint8_t {
         IdxOfZwOpenFile = 0u,
         IdxOfZwCreateFile
     };
@@ -117,11 +117,13 @@ namespace Detours::Test
         DetourTransactionBegin();
         DetourUpdateThread(ZwCurrentThread());
         {
-            Hook::_ZwOpenFile = ::ZwOpenFile;
-            Hook::_ZwCreateFile = ::ZwCreateFile;
+            using namespace Hook;
 
-            DetourAttach((void**)&Hook::_ZwOpenFile, Hook::ZwOpenFile);
-            DetourAttach((void**)&Hook::_ZwCreateFile, Hook::ZwCreateFile);
+            _ZwOpenFile   = ::ZwOpenFile;
+            _ZwCreateFile = ::ZwCreateFile;
+
+            DetourAttach((void**)&_ZwOpenFile,   Hook::ZwOpenFile);
+            DetourAttach((void**)&_ZwCreateFile, Hook::ZwCreateFile);
         }
         DetourTransactionCommit();
 
@@ -136,15 +138,17 @@ namespace Detours::Test
         DetourTransactionBegin();
         DetourUpdateThread(ZwCurrentThread());
         {
-            DetourDetach((void**)&Hook::_ZwOpenFile, Hook::ZwOpenFile);
-            DetourDetach((void**)&Hook::_ZwCreateFile, Hook::ZwCreateFile);
+            using namespace Hook;
+            DetourDetach((void**)&_ZwOpenFile,   Hook::ZwOpenFile);
+            DetourDetach((void**)&_ZwCreateFile, Hook::ZwCreateFile);
         }
         DetourTransactionCommit();
 
         LOG("Exit");
     }
 
-    EXTERN_C BOOL WINAPI DllMain(_In_ void* /*DllHandle*/, _In_ unsigned Reason, _In_opt_ void* /*Reserved*/) {
+    EXTERN_C BOOL WINAPI DllMain(_In_ void* /*DllHandle*/, _In_ unsigned Reason, _In_opt_ void* /*Reserved*/)
+    {
         if (Reason == DLL_PROCESS_ATTACH) {
             MainEntry();
         }
